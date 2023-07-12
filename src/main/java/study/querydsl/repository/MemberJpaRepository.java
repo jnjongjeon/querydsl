@@ -1,21 +1,15 @@
 package study.querydsl.repository;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 import study.querydsl.dto.MemberSearchCondition;
 import study.querydsl.dto.MemberTeamDto;
 import study.querydsl.dto.QMemberTeamDto;
 import study.querydsl.entity.Member;
-import study.querydsl.entity.QMember;
-import study.querydsl.entity.QTeam;
 
 import javax.persistence.EntityManager;
-import javax.servlet.http.PushBuilder;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,12 +18,12 @@ import static study.querydsl.entity.QMember.*;
 import static study.querydsl.entity.QTeam.*;
 
 @Repository
-public class memberJpaRepository {
+public class MemberJpaRepository {
 
     private final EntityManager em;
     private final JPAQueryFactory queryFactory;
 
-    public memberJpaRepository(EntityManager em) {
+    public MemberJpaRepository(EntityManager em) {
         this.em = em;
         this.queryFactory = new JPAQueryFactory(em);
     }
@@ -109,14 +103,12 @@ public class memberJpaRepository {
                         team.id.as("teamId"),
                         team.name.as("teamName")))
                 .from(member)
-                .leftJoin(member.team, team)
+                .join(member.team, team)
                 .where(usernameEq(condition.getUsername()),
                         teamNameEq(condition.getTeamName()),
                         ageGoe(condition.getAgeGoe()),
                         ageLoe(condition.getAgeLoe()))
                 .fetch();
-
-
     }
 
     private BooleanExpression usernameEq(String username) {
